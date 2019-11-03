@@ -1,8 +1,8 @@
-#include "Display.h"
+#include "GameController.h"
 
 int main(int argc, char* argv[])
 {
-	Display display;
-	display.Run();
+	GameController controller;
+	controller.Run();
 	return 0;
 }
