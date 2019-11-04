@@ -22,8 +22,11 @@ void GameController::Run()
 	Display screen(this->path);
 	GameLogic logic;
 
+	
+
 	/* Initial state */
 	std::string state = "sp";
+	screen.SetGrid();
 
 	/* True if a box is selected */
 	bool pressed = false;
@@ -46,7 +49,7 @@ void GameController::Run()
 					if (logic.IsWithinScreen(e.mouseButton.x, e.mouseButton.y))
 					{
 						screen.SetHighlighterPosition(logic.CheckXY(true, e.mouseButton.x), logic.CheckXY(false, e.mouseButton.y));
-						pressed = true;
+						pressed = true ? logic.IsFixed(screen) : false;
 					}
 					else
 						pressed = false;
