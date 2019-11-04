@@ -30,6 +30,7 @@ void GameController::Run()
 
 	/* True if a box is selected */
 	bool pressed = false;
+	int gameMap[9][9];
 
 	while (window.isOpen())
 	{
@@ -54,7 +55,25 @@ void GameController::Run()
 					else
 						pressed = false;
 				}
+				else
+				{
+					screen.GetGameMap(gameMap);					
+					if (logic.SudokuSolver(gameMap))
+					{
+						for (int i = 0; i < 9; i++)
+						{
+							for (int j = 0; j < 9; j++)
+							{
+								std::cout << gameMap[i][j] << " ";
+							}
+							std::cout << "\n";
+						}
+						screen.AssignAnswers(gameMap);
+						screen.SetGrid();
+					}
+				}
 			}
+			
 		}
 		if (state == "sp")
 		{

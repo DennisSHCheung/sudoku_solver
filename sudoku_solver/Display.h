@@ -34,6 +34,8 @@ public:
 	void SetHighlighterPosition(int, int);
 	void SetGrid();
 	void DrawWindow(sf::RenderWindow&, bool);
+	void GetGameMap(int map[][9]);
+	void AssignAnswers(int map[][9]);
 	bool IsFixed(int, int);
 	~Display();
 };

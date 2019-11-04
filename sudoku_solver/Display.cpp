@@ -47,6 +47,20 @@ bool Display::IsFixed(int x, int y)
 	return fixed[y][x];
 }
 
+void Display::GetGameMap(int map[][9])
+{
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			map[i][j] = LevelOne[i][j];
+}
+
+void Display::AssignAnswers(int map[][9])
+{
+	for (int i = 0; i < 9; i++)
+		for (int j = 0; j < 9; j++)
+			LevelOne[i][j] = map[i][j];
+}
+
 void Display::DrawWindow(RenderWindow &window, bool pressed)
 {
 	window.clear(Color::White);
