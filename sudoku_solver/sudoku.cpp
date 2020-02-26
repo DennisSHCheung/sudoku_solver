@@ -11,7 +11,7 @@ int main(int argc, char* argv[])
 	std::vector<screen*> screens;
 	screen_name current_screen = screen_name::MENU;
 
-	sf::RenderWindow app(sf::VideoMode(800, 800), "SUDOKU");
+	sf::RenderWindow app(sf::VideoMode(800, 500), "SUDOKU");
 
 	menu_screen menu;
 	game_screen sudoku;

@@ -1,6 +1,5 @@
 #pragma once
 #include "screen.h"
-#include "common.h"
 
 class menu_screen :
 	public screen

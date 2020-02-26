@@ -17,4 +17,20 @@ public:
 			app.setSize(sf::Vector2u(app.getSize().x, MIN_SCREEN_HEIGHT));
 		}
 	}
+
+	virtual sf::Vector2f get_mouse_coord(sf::RenderWindow& app)
+	{
+		sf::Vector2i mouse_position = sf::Mouse::getPosition(app); // Mouse position related to the window
+		sf::Vector2f translated_position = app.mapPixelToCoords(mouse_position); // Translate mouse position into window coordinates
+		return translated_position;
+	}
+
+	virtual std::string get_exe_location()
+	{
+		char result[MAX_PATH];
+		std::string path = std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+		path = path.substr(0, path.find_last_of("\\"));
+		path += "\\assets\\";
+		return path;
+	}
 };

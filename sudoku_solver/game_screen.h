@@ -9,7 +9,7 @@ public:
 
 	virtual screen_name run(sf::RenderWindow& app);
 
-	void draw_grid(sf::Vector2u screen_size, std::vector<sf::VertexArray>& grid);
+	void draw_grid(sf::Vector2u screen_size, std::vector<sf::RectangleShape>& grid);
 
 	~game_screen();
 };

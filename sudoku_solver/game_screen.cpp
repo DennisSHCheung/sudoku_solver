@@ -7,23 +7,13 @@ game_screen::game_screen()
 
 screen_name game_screen::run(sf::RenderWindow &app)
 {
-
-	/*sf::Vertex vertices[] =
-	{
-		sf::Vertex(sf::Vector2f(0,   0), sf::Color::Red),
-		sf::Vertex(sf::Vector2f(0, 100), sf::Color::Red),
-		sf::Vertex(sf::Vector2f(100, 100), sf::Color::Red),
-		sf::Vertex(sf::Vector2f(100,   0), sf::Color::Red)
-	};*/
-	// draw it
-
-
-	std::vector<sf::VertexArray> grid;
+	std::vector<sf::RectangleShape> grid;
 
 	while (app.isOpen())
 	{
 		check_screen_size(app);
 
+		grid.clear();
 		draw_grid(app.getSize(), grid);
 
 		sf::Event event;
@@ -31,9 +21,17 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		{
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
-				return screen_name::END;
+				if (grid[0].getGlobalBounds().contains(get_mouse_coord(app)))
+				{
+					std::cout << "Inside\n";
+				}
+				else
+					return screen_name::END;
 			}
 		}
+
+		
+
 		app.clear(sf::Color::Black);
 		//app.draw(vertices, 4, sf::Lines);
 		//app.draw(lines);
@@ -41,6 +39,7 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		{
 			app.draw(i);
 		}
+		//app.draw(left);
 		app.display();
 	}
 
@@ -48,20 +47,15 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	return screen_name::END;
 }
 
-void game_screen::draw_grid(sf::Vector2u screen_size, std::vector<sf::VertexArray>& grid)
+void game_screen::draw_grid(sf::Vector2u screen_size, std::vector<sf::RectangleShape>& grid)
 {
-	sf::VertexArray lines(sf::LinesStrip, 4);
-	lines[0].position = sf::Vector2f(20, 20);
-	lines[0].color = sf::Color::White;
-	lines[1].position = sf::Vector2f(20, 300);
-	lines[1].color = sf::Color::White;
-
-
-	lines[2].position = sf::Vector2f(21, 20);
-	lines[2].color = sf::Color::White;
-	lines[3].position = sf::Vector2f(21, 300);
-	lines[3].color = sf::Color::White;
-	grid.push_back(lines);
+	sf::RectangleShape left_edge(sf::Vector2f(47.f, 47.f));
+	left_edge.setPosition(sf::Vector2f(50.f, 50.f));
+	sf::RectangleShape inner(sf::Vector2f(40.f, 40.f));
+	inner.setPosition(sf::Vector2f(55.f, 55.f));
+	inner.setFillColor(sf::Color::Black);
+	grid.push_back(left_edge);
+	grid.push_back(inner);
 }
 
 game_screen::~game_screen()
