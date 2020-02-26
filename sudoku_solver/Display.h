@@ -31,6 +31,9 @@ private:
 
 public:
 	Display(std::string);
+
+	void DrawHomeScreen(sf::RenderWindow&);
+
 	void SetHighlighterPosition(int, int);
 	void SetGrid();
 	void DrawWindow(sf::RenderWindow&, bool);

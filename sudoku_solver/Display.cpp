@@ -15,6 +15,13 @@ Display::Display(std::string path) : path(path)
 	}
 }
 
+void Display::DrawHomeScreen(sf::RenderWindow &window)
+{
+	window.clear(sf::Color::White);
+	window.draw(this->background);
+
+}
+
 void Display::SetGrid()
 {
 	numberTexture.loadFromFile(this->path + "\\assets\\number.png");
