@@ -5,8 +5,8 @@
 
 int main(int argc, char* argv[])
 {
-	//GameController controller;
-	//controller.Run();
+	/*GameController controller;
+	controller.Run();*/
 
 	std::vector<screen*> screens;
 	screen_name current_screen = screen_name::MENU;

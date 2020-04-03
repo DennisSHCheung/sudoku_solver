@@ -56,5 +56,8 @@
     <ClInclude Include="menu_screen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="puzzles.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
