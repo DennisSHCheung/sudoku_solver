@@ -135,22 +135,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Display.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GameLogic.cpp" />
     <ClCompile Include="game_screen.cpp" />
     <ClCompile Include="menu_screen.cpp" />
     <ClCompile Include="sudoku.cpp" />
+    <ClCompile Include="sudoku_logic.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h" />
-    <ClInclude Include="Display.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GameLogic.h" />
     <ClInclude Include="game_screen.h" />
     <ClInclude Include="menu_screen.h" />
     <ClInclude Include="puzzles.h" />
     <ClInclude Include="screen.h" />
+    <ClInclude Include="sudoku_logic.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -181,9 +181,12 @@ void game_screen::draw_numbers(std::vector<sf::RectangleShape>& box, std::vector
 
 bool game_screen::key_code_handler(sf::Event& event, int i)
 {
-	int num = 0;
+	int num = -1;
 	switch (event.key.code)
 	{
+		case sf::Keyboard::Num0:
+			num = 0;
+			break;
 		case sf::Keyboard::Num1:
 			num = 1;
 			break;
@@ -212,7 +215,7 @@ bool game_screen::key_code_handler(sf::Event& event, int i)
 			num = 9;
 			break;
 	}
-	if (num > 0)
+	if (num > -1 && sudoku_logic::is_input_correct(this->game_puzzle, i / 9, i % 9, num) || num == 0)
 	{
 		this->game_puzzle[i / 9][i % 9] = num;
 		return true;

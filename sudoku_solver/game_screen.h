@@ -1,6 +1,7 @@
 #pragma once
 #include "screen.h"
 #include "puzzles.h"
+#include "sudoku_logic.h"
 
 class game_screen :
 	public screen
