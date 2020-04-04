@@ -7,9 +7,17 @@ game_screen::game_screen()
 
 screen_name game_screen::run(sf::RenderWindow &app)
 {
-	std::vector<sf::RectangleShape> grid;
+	// Initialises variables
+	sf::RectangleShape grid;
 	std::vector<sf::RectangleShape> box;
-	std::vector<sf::Sprite> number;
+	std::vector<sf::Sprite> number_sprite;
+
+	sf::RectangleShape indicator(sf::Vector2f(BOX_SIZE + 6, BOX_SIZE + 6));
+	indicator.setFillColor(sf::Color::Green);
+
+	bool is_indicator_on = false;
+	bool is_changed = true;
+	int indicator_position = 0;
 
 	// Load number texture
 	load_texture();
@@ -17,9 +25,7 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	// Load game puzzle
 	load_puzzle();
 
-	bool is_changed = true;
-
-	draw_grid(grid, box, number);
+	draw_grid(grid, box);
 
 	app.clear(sf::Color::Black);
 	while (app.isOpen())
@@ -38,15 +44,34 @@ screen_name game_screen::run(sf::RenderWindow &app)
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					for (auto &i : box)
+					is_indicator_on = false;
+					is_changed = true;
+					for (int i = 0; i < box.size(); i++)
 					{
-						if (i.getGlobalBounds().contains(get_mouse_coord(app)))
+						if (box[i].getGlobalBounds().contains(get_mouse_coord(app)))
 						{
-							// Game Logic
-							std::cout << i.getOrigin().x << " " << i.getOrigin().y << "\n";
+							if (!is_init_exist[i / 9][i % 9])
+							{
+								indicator.setPosition(sf::Vector2f(box[i].getPosition().x - 3.f, box[i].getPosition().y - 3.f));
+								is_indicator_on = true;
+								indicator_position = i;
+							}
+							break;
 						}
 					}
 				}				
+			}
+			else if (event.type = sf::Event::KeyPressed)
+			{
+				if (is_indicator_on)
+				{
+					if (key_code_handler(event, indicator_position))
+					{
+						is_changed = true;
+						is_indicator_on = false;
+					}
+				}
+				
 			}
 			
 		}		
@@ -56,13 +81,19 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		if (is_changed)
 		{
 			app.clear(sf::Color::Black);
-			for (int i = 0; i < grid.size(); i++)
-			{
-				app.draw(grid[i]);
-				app.draw(box[i]);
-				app.draw(number[i]);
-			}
-			is_changed = false;
+
+			app.draw(grid);
+
+			if (is_indicator_on)
+				app.draw(indicator);
+
+			for (auto &i : box)
+				app.draw(i);
+
+			draw_numbers(box, number_sprite);
+			for (auto &i : number_sprite)
+				app.draw(i);
+
 			app.display();
 		}
 	}
@@ -71,129 +102,128 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	return screen_name::END;
 }
 
-void game_screen::draw_grid(std::vector<sf::RectangleShape>& grid, 
-							std::vector<sf::RectangleShape>& box,
-							std::vector<sf::Sprite>& number)
+void game_screen::set_grid_origin(int index, float& position)
 {
-	// Reset
-	grid.clear();
-	box.clear();
+	if (index == 0 || index == 3 || index == 6)
+		position += LARGE_GRID;
+	else
+		position += SMALL_GRID;
+}
 
-	sf::Vector2f grid_size(BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE, BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE);
+void game_screen::draw_grid(sf::RectangleShape& grid, std::vector<sf::RectangleShape>& box)
+{
+	const int full_grid = LARGE_GRID * 4 + SMALL_GRID * 5 - INNER_GRID_SIZE;
+
+	sf::Vector2f grid_size(full_grid, full_grid);
 	sf::Vector2f grid_origin(GRID_ORIGIN_X, GRID_ORIGIN_Y);
 
-	// Draw top left grid
-	draw_outer_grid(grid_size, grid_origin, grid);
-	draw_inner_grid(grid_origin.x + OUTER_GRID_SIZE, grid_origin.y + OUTER_GRID_SIZE, box);
-	draw_numbers(grid_origin.x + OUTER_GRID_SIZE, grid_origin.y + OUTER_GRID_SIZE, 0, 0, number);
+	sf::RectangleShape outer_grid(grid_size);
+	outer_grid.setPosition(grid_origin);
+	grid = outer_grid;
 
-	// Draw grids on 1st column
-	for (int i = 0; i < 8; i++)
+	sf::Vector2f current_origin = grid_origin;
+	for (int i = 0; i < 9; i++)
 	{
-		grid_origin.x += grid_size.x;
-		if (i == 1 || i == 4 || i == 7)
-		{
-			grid_size.x = BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE;
-		}
-		else
-		{
-			grid_size.x = BOX_SIZE + INNER_GRID_SIZE;
-		}
-
-		draw_outer_grid(grid_size, grid_origin, grid);
-		draw_inner_grid(grid_origin.x, grid_origin.y + OUTER_GRID_SIZE, box);
-		draw_numbers(grid_origin.x, grid_origin.y + OUTER_GRID_SIZE, 0, i + 1, number);
-	}
-
-	// Draw grids on 1st row
-	grid_origin.x = GRID_ORIGIN_X;
-	for (int i = 0; i < 8; i++)
-	{
-		grid_origin.y += grid_size.y;
-		if (i == 1 || i == 4 || i == 7)
-		{
-			grid_size.y = BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE;
-		}
-		else
-		{
-			grid_size.y = BOX_SIZE + INNER_GRID_SIZE;
-		}
-
-		draw_outer_grid(grid_size, grid_origin, grid);
-		draw_inner_grid(grid_origin.x + OUTER_GRID_SIZE, grid_origin.y, box);
-		draw_numbers(grid_origin.x + OUTER_GRID_SIZE, grid_origin.y, i + 1, 0, number);
-	}
-
-	// Reset
-	grid_size = { BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE , BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE };
-	grid_origin.x = GRID_ORIGIN_X;
-	grid_origin.y = GRID_ORIGIN_Y;
-
-	// Draw the rest of the grids
-	for (int i = 0; i < 8; i++)
-	{
-		grid_origin.y += grid_size.y;
-		if (i == 1 || i == 4 || i == 7)
-		{
-			grid_size.y = BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE;
-		}
-		else
-		{
-			grid_size.y = BOX_SIZE + INNER_GRID_SIZE;
-		}
-		
-		for (int j = 0; j < 8; j++)
-		{
-			grid_origin.x += grid_size.x;
-			if (j == 1 || j == 4 || j == 7)
+		if (i == 0)
+			current_origin.y += OUTER_GRID_SIZE;
+		for (int j = 0; j < 9; j++)
+		{	
+			if (j == 0)
 			{
-				grid_size.x = BOX_SIZE + INNER_GRID_SIZE + OUTER_GRID_SIZE;
+				current_origin.x = grid_origin.x + OUTER_GRID_SIZE;
 			}
 			else
 			{
-				grid_size.x = BOX_SIZE + INNER_GRID_SIZE;
+				set_grid_origin(j, current_origin.x);
 			}
-
-			draw_outer_grid(grid_size, grid_origin, grid);
-			draw_inner_grid(grid_origin.x, grid_origin.y, box);
-			draw_numbers(grid_origin.x, grid_origin.y, i + 1, j + 1, number);
+			
+			draw_inner_grid(current_origin, box);
 		}
-		grid_origin.x = GRID_ORIGIN_X;
+		set_grid_origin(i + 1, current_origin.y);
 	}
-	
-	
 }
 
-void game_screen::draw_outer_grid(sf::Vector2f& grid_size, sf::Vector2f& grid_origin, std::vector<sf::RectangleShape>& grid)
-{
-	sf::RectangleShape outer(sf::Vector2f(grid_size.x, grid_size.y));
-	outer.setPosition(sf::Vector2f(grid_origin.x, grid_origin.y));
-	grid.push_back(outer);
-}
-
-void game_screen::draw_inner_grid(int x, int y, std::vector<sf::RectangleShape>& box)
+void game_screen::draw_inner_grid(sf::Vector2f origin, std::vector<sf::RectangleShape>& box)
 {
 	sf::RectangleShape inner(sf::Vector2f(BOX_SIZE, BOX_SIZE));
-	inner.setPosition(sf::Vector2f(x, y));
+	inner.setPosition(origin);
 	inner.setFillColor(sf::Color::Black);
 	box.push_back(inner);
 }
 
-void game_screen::draw_numbers(int x, int y, int row, int col, std::vector<sf::Sprite>& number)
+void game_screen::draw_numbers(std::vector<sf::RectangleShape>& box, std::vector<sf::Sprite>& number_sprite)
 {
-	sf::Sprite number_sprite(number_texture);
-	if (game_puzzle[row][col] != 0)
-		number_sprite.setTextureRect(sf::IntRect(game_puzzle[row][col] * 7 - 7, 0, 7, 8));
-	else
-		number_sprite.setTextureRect(sf::IntRect(0, 15, 7, 8));
-	number_sprite.setScale(sf::Vector2f(5.f, 5.f));
-	number_sprite.setPosition(sf::Vector2f(x + 16.f, y + 16.f));
-	number.push_back(number_sprite);
+	number_sprite.clear();
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			// Set numbers to yellow if they are part of the level
+			sf::Sprite sprite;
+			if (is_init_exist[i][j])
+				sprite.setTexture(fixed_number_texture);
+			else
+				sprite.setTexture(input_number_texture);
+
+			sf::Vector2f origin = box.at(i * 9 + j).getPosition(); // Get the position of the corresponding box
+			int x = origin.x;
+			int y = origin.y;
+			if (this->game_puzzle[i][j] != 0)
+				sprite.setTextureRect(sf::IntRect(game_puzzle[i][j] * 7 - 7, 0, 7, 8));
+			else
+				sprite.setTextureRect(sf::IntRect(0, 15, 7, 8));	// Set to empty when number is 0
+			sprite.setScale(sf::Vector2f(5.f, 5.f));
+			sprite.setPosition(sf::Vector2f(x + 16.f, y + 16.f));
+			number_sprite.push_back(sprite);
+		}
+	}
+}
+
+bool game_screen::key_code_handler(sf::Event& event, int i)
+{
+	int num = 0;
+	switch (event.key.code)
+	{
+		case sf::Keyboard::Num1:
+			num = 1;
+			break;
+		case sf::Keyboard::Num2:
+			num = 2;
+			break;
+		case sf::Keyboard::Num3:
+			num = 3;
+			break;
+		case sf::Keyboard::Num4:
+			num = 4;
+			break;
+		case sf::Keyboard::Num5:
+			num = 5;
+			break;
+		case sf::Keyboard::Num6:
+			num = 6;
+			break;
+		case sf::Keyboard::Num7:
+			num = 7;
+			break;
+		case sf::Keyboard::Num8:
+			num = 8;
+			break;
+		case sf::Keyboard::Num9:
+			num = 9;
+			break;
+	}
+	if (num > 0)
+	{
+		this->game_puzzle[i / 9][i % 9] = num;
+		return true;
+	}
+	return false;
 }
 
 void game_screen::load_texture()
 {
-	this->number_texture.loadFromFile(get_exe_location() + "\\number.png");
+	this->input_number_texture.loadFromFile(get_exe_location() + "\\number.png");
+	this->fixed_number_texture.loadFromFile(get_exe_location() + "\\number_yellow.png");
 }
 
 void game_screen::load_puzzle()
@@ -202,7 +232,11 @@ void game_screen::load_puzzle()
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			this->game_puzzle[i][j] = puzzle_0[i][j];	// change later
+			this->game_puzzle[i][j] = puzzle_0[i][j];
+			if (this->game_puzzle[i][j] != 0)
+				this->is_init_exist[i][j] = true;
+			else
+				this->is_init_exist[i][j] = false;
 		}
 	}
 }
