@@ -9,6 +9,9 @@ public:
 	static bool is_square_free(int game_puzzle[][9], int row, int col, int num);
 	static bool is_input_correct(int game_puzzle[][9], int row, int col, int num);
 
+	static bool is_empty(int game_puzzle[][9], int& row, int& col);
+	static bool solve(int game_puzzle[][9]);
+
 	~sudoku_logic();
 };
 

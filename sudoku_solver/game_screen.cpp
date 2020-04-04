@@ -59,7 +59,12 @@ screen_name game_screen::run(sf::RenderWindow &app)
 							break;
 						}
 					}
-				}				
+				}
+				else
+				{
+					sudoku_logic::solve(game_puzzle);
+					is_changed = true;
+				}
 			}
 			else if (event.type = sf::Event::KeyPressed)
 			{

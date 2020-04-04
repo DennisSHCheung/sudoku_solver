@@ -12,9 +12,6 @@ private:
 	int game_puzzle[9][9];
 	bool is_init_exist[9][9];
 
-	std::vector<int> number_order;
-	std::vector<bool> number_is_fixed;
-	bool is_init = true;
 public:
 	game_screen();
 
