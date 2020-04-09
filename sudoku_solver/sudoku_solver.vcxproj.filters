@@ -13,45 +13,66 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\Art">
+      <UniqueIdentifier>{abe39c5b-dc71-40fe-a5f9-a84936b7360b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Screen">
+      <UniqueIdentifier>{bddba6f7-0eab-42bb-a87a-ccd66ceb384b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Screen">
+      <UniqueIdentifier>{e4785d12-cea8-48fe-92a7-d25b4fc5c6ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Common">
+      <UniqueIdentifier>{0db3ba88-b00e-4c40-adfd-1347b81c2270}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Art">
+      <UniqueIdentifier>{a86d151a-fa56-4e24-b28e-648ab3fff215}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sudoku.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="game_screen.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="menu_screen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sudoku_logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="custom_game_screen.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="game_screen.cpp">
+      <Filter>Source Files\Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="menu_screen.cpp">
+      <Filter>Source Files\Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="button.cpp">
+      <Filter>Source Files\Art</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="game_screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="menu_screen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="puzzles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="sudoku_logic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="menu_screen.h">
+      <Filter>Header Files\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="game_screen.h">
+      <Filter>Header Files\Screen</Filter>
+    </ClInclude>
     <ClInclude Include="custom_game_screen.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="screen.h">
+      <Filter>Header Files\Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="puzzles.h">
+      <Filter>Header Files\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="button.h">
+      <Filter>Header Files\Art</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

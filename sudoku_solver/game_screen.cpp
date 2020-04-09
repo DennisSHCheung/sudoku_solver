@@ -19,6 +19,9 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	// Initialise game grid
 	draw_grid();
 
+	// Initialise buttons
+	init_buttons();
+
 	app.clear(sf::Color::Black);
 	while (app.isOpen())
 	{
@@ -28,8 +31,9 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		sf::Event event;
 		while (app.pollEvent(event))
 		{
-			if (event_handler(event, app))
-				return screen_name::END;	
+			screen_name next_screen = event_handler(event, app);
+			if ((next_screen == screen_name::END) || (next_screen == screen_name::MENU))
+				return next_screen;
 		}		
 
 		// Avoid re-printing the puzzle every frame
@@ -37,6 +41,12 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		if (this->is_changed)
 		{
 			app.clear(sf::Color::Black);
+
+			for (auto &i : this->list_of_buttons)
+			{
+				app.draw(i.get_outer_button());
+				app.draw(i.get_inner_button());
+			}
 
 			app.draw(this->grid);
 
@@ -168,28 +178,25 @@ bool game_screen::key_code_handler(sf::Event& event, int i)
 	return false;
 }
 
-bool game_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
+screen_name game_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
 {
 	if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
 	{
-		return true;
+		return screen_name::END;
 	}
 	else if (event.type == sf::Event::MouseButtonPressed)
 	{
 		if (event.mouseButton.button == sf::Mouse::Left)
 		{
 			check_indicator(app);
-		}
-		else
-		{
-			solve_sudoku();
+			return button_handler(app);
 		}
 	}
 	else if (event.type = sf::Event::KeyPressed)
 	{
 		insert_number(event);
 	}
-	return false;
+	return screen_name::GAME;
 }
 
 void game_screen::solve_sudoku()
@@ -229,10 +236,52 @@ void game_screen::insert_number(sf::Event& event)
 	}
 }
 
+void game_screen::init_buttons()
+{
+	button solve_button(5.f, sf::Vector2f(180.f, 80.f),
+		sf::Vector2f(800.f, 350.f), sf::Color::Green, sf::Color::White);
+
+	button return_button(5.f, sf::Vector2f(180.f, 80.f),
+		sf::Vector2f(800.f, 500.f), sf::Color::Green, sf::Color::White);
+
+	this->list_of_buttons.push_back(solve_button);
+	this->list_of_buttons.push_back(return_button);
+}
+
+int game_screen::find_button(sf::RenderWindow& app)
+{
+	for (int i = 0; i < this->list_of_buttons.size(); i++)
+		if (this->list_of_buttons[i].get_outer_button().getGlobalBounds().contains(get_mouse_coord(app)))
+			return i;
+	return -1;
+}
+
+screen_name game_screen::button_handler(sf::RenderWindow& app)
+{
+	// Find the selected button
+	int button_index = find_button(app);
+	if (button_index == -1)
+		return screen_name::GAME;
+
+	switch (static_cast<button_name>(button_index))
+	{
+	case button_name::SOLVE:
+		solve_sudoku();
+		return screen_name::GAME;
+	case button_name::RETURN:
+		return screen_name::MENU;
+	default:
+		return screen_name::GAME;
+	}
+}
+
 void game_screen::init_indicator()
 {
 	this->indicator.setSize(sf::Vector2f(BOX_SIZE + 6, BOX_SIZE + 6));
 	this->indicator.setFillColor(sf::Color::Green);
+	this->is_indicator_on = false;
+	this->is_changed = true;
+	this->indicator_position = 0;
 }
 
 void game_screen::load_texture()

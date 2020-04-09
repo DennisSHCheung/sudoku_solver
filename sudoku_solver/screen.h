@@ -1,10 +1,16 @@
 #pragma once
 #include "common.h"
+#include "button.h"
 
 class screen
 {
 public:
+
+	std::vector<button> list_of_buttons;
+
 	virtual screen_name run(sf::RenderWindow& app) = 0;
+
+	//virtual void init_buttons() = 0;
 
 	virtual void check_screen_size(sf::RenderWindow &app)
 	{

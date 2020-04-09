@@ -6,19 +6,25 @@
 class game_screen :
 	public screen
 {
-protected:
+private:
+	enum button_name { SOLVE, RETURN, EXIT };
 
+protected:
 	sf::RectangleShape grid;
 	std::vector<sf::RectangleShape> box;
 	std::vector<sf::Sprite> number_sprite;
 	sf::RectangleShape indicator;
 
-	bool is_indicator_on = false;
-	bool is_changed = true;
-	int indicator_position = 0;
+	// grid indicator
+	bool is_indicator_on;
+	bool is_changed;
+	int indicator_position;
 
+	// textures used for numbers
 	sf::Texture input_number_texture;
 	sf::Texture fixed_number_texture;
+
+	// 9x9 grid
 	int game_puzzle[9][9];
 	bool is_init_exist[9][9];
 
@@ -38,10 +44,15 @@ public:
 	void draw_numbers();
 
 	bool key_code_handler(sf::Event& event, int i);
-	virtual bool event_handler(sf::Event&event, sf::RenderWindow& app);
+	screen_name event_handler(sf::Event&event, sf::RenderWindow& app);
 	virtual void insert_number(sf::Event& event);
 	void check_indicator(sf::RenderWindow& app);
 	void solve_sudoku();
+
+	//screen_name button_handler(button_name button);
+	void init_buttons();
+	screen_name button_handler(sf::RenderWindow& app);
+	int find_button(sf::RenderWindow& app);
 
 	~game_screen();
 };
