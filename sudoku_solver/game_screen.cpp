@@ -7,17 +7,8 @@ game_screen::game_screen()
 
 screen_name game_screen::run(sf::RenderWindow &app)
 {
-	// Initialises variables
-	sf::RectangleShape grid;
-	std::vector<sf::RectangleShape> box;
-	std::vector<sf::Sprite> number_sprite;
-
-	sf::RectangleShape indicator(sf::Vector2f(BOX_SIZE + 6, BOX_SIZE + 6));
-	indicator.setFillColor(sf::Color::Green);
-
-	bool is_indicator_on = false;
-	bool is_changed = true;
-	int indicator_position = 0;
+	// Initialize indicator
+	init_indicator();
 
 	// Load number texture
 	load_texture();
@@ -25,7 +16,8 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	// Load game puzzle
 	load_puzzle();
 
-	draw_grid(grid, box);
+	// Initialise game grid
+	draw_grid();
 
 	app.clear(sf::Color::Black);
 	while (app.isOpen())
@@ -36,67 +28,26 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		sf::Event event;
 		while (app.pollEvent(event))
 		{
-			if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
-			{
-				return screen_name::END;
-			}
-			else if (event.type == sf::Event::MouseButtonPressed)
-			{
-				if (event.mouseButton.button == sf::Mouse::Left)
-				{
-					is_indicator_on = false;
-					is_changed = true;
-					for (int i = 0; i < box.size(); i++)
-					{
-						if (box[i].getGlobalBounds().contains(get_mouse_coord(app)))
-						{
-							if (!is_init_exist[i / 9][i % 9])
-							{
-								indicator.setPosition(sf::Vector2f(box[i].getPosition().x - 3.f, box[i].getPosition().y - 3.f));
-								is_indicator_on = true;
-								indicator_position = i;
-							}
-							break;
-						}
-					}
-				}
-				else
-				{
-					sudoku_logic::solve(game_puzzle);
-					is_changed = true;
-				}
-			}
-			else if (event.type = sf::Event::KeyPressed)
-			{
-				if (is_indicator_on)
-				{
-					if (key_code_handler(event, indicator_position))
-					{
-						is_changed = true;
-						is_indicator_on = false;
-					}
-				}
-				
-			}
-			
+			if (event_handler(event, app))
+				return screen_name::END;	
 		}		
 
 		// Avoid re-printing the puzzle every frame
 		// Only re-print when something has happened to the puzzle
-		if (is_changed)
+		if (this->is_changed)
 		{
 			app.clear(sf::Color::Black);
 
-			app.draw(grid);
+			app.draw(this->grid);
 
-			if (is_indicator_on)
-				app.draw(indicator);
+			if (this->is_indicator_on)
+				app.draw(this->indicator);
 
-			for (auto &i : box)
+			for (auto &i : this->box)
 				app.draw(i);
 
-			draw_numbers(box, number_sprite);
-			for (auto &i : number_sprite)
+			draw_numbers();
+			for (auto &i : this->number_sprite)
 				app.draw(i);
 
 			app.display();
@@ -115,7 +66,7 @@ void game_screen::set_grid_origin(int index, float& position)
 		position += SMALL_GRID;
 }
 
-void game_screen::draw_grid(sf::RectangleShape& grid, std::vector<sf::RectangleShape>& box)
+void game_screen::draw_grid()
 {
 	const int full_grid = LARGE_GRID * 4 + SMALL_GRID * 5 - INNER_GRID_SIZE;
 
@@ -124,7 +75,7 @@ void game_screen::draw_grid(sf::RectangleShape& grid, std::vector<sf::RectangleS
 
 	sf::RectangleShape outer_grid(grid_size);
 	outer_grid.setPosition(grid_origin);
-	grid = outer_grid;
+	this->grid = outer_grid;
 
 	sf::Vector2f current_origin = grid_origin;
 	for (int i = 0; i < 9; i++)
@@ -142,23 +93,23 @@ void game_screen::draw_grid(sf::RectangleShape& grid, std::vector<sf::RectangleS
 				set_grid_origin(j, current_origin.x);
 			}
 			
-			draw_inner_grid(current_origin, box);
+			draw_inner_grid(current_origin);
 		}
 		set_grid_origin(i + 1, current_origin.y);
 	}
 }
 
-void game_screen::draw_inner_grid(sf::Vector2f origin, std::vector<sf::RectangleShape>& box)
+void game_screen::draw_inner_grid(sf::Vector2f origin)
 {
 	sf::RectangleShape inner(sf::Vector2f(BOX_SIZE, BOX_SIZE));
 	inner.setPosition(origin);
 	inner.setFillColor(sf::Color::Black);
-	box.push_back(inner);
+	this->box.push_back(inner);
 }
 
-void game_screen::draw_numbers(std::vector<sf::RectangleShape>& box, std::vector<sf::Sprite>& number_sprite)
+void game_screen::draw_numbers()
 {
-	number_sprite.clear();
+	this->number_sprite.clear();
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -174,12 +125,12 @@ void game_screen::draw_numbers(std::vector<sf::RectangleShape>& box, std::vector
 			int x = origin.x;
 			int y = origin.y;
 			if (this->game_puzzle[i][j] != 0)
-				sprite.setTextureRect(sf::IntRect(game_puzzle[i][j] * 7 - 7, 0, 7, 8));
+				sprite.setTextureRect(sf::IntRect(this->game_puzzle[i][j] * 7 - 7, 0, 7, 8));
 			else
 				sprite.setTextureRect(sf::IntRect(0, 15, 7, 8));	// Set to empty when number is 0
 			sprite.setScale(sf::Vector2f(5.f, 5.f));
 			sprite.setPosition(sf::Vector2f(x + 16.f, y + 16.f));
-			number_sprite.push_back(sprite);
+			this->number_sprite.push_back(sprite);
 		}
 	}
 }
@@ -187,45 +138,101 @@ void game_screen::draw_numbers(std::vector<sf::RectangleShape>& box, std::vector
 bool game_screen::key_code_handler(sf::Event& event, int i)
 {
 	int num = -1;
-	switch (event.key.code)
-	{
-		case sf::Keyboard::Num0:
-			num = 0;
-			break;
-		case sf::Keyboard::Num1:
-			num = 1;
-			break;
-		case sf::Keyboard::Num2:
-			num = 2;
-			break;
-		case sf::Keyboard::Num3:
-			num = 3;
-			break;
-		case sf::Keyboard::Num4:
-			num = 4;
-			break;
-		case sf::Keyboard::Num5:
-			num = 5;
-			break;
-		case sf::Keyboard::Num6:
-			num = 6;
-			break;
-		case sf::Keyboard::Num7:
-			num = 7;
-			break;
-		case sf::Keyboard::Num8:
-			num = 8;
-			break;
-		case sf::Keyboard::Num9:
-			num = 9;
-			break;
-	}
-	if (num > -1 && sudoku_logic::is_input_correct(this->game_puzzle, i / 9, i % 9, num) || num == 0)
+
+	if (event.key.code == sf::Keyboard::Num0 || event.key.code == sf::Keyboard::Numpad0)
+		num = 0;
+	else if (event.key.code == sf::Keyboard::Num1 || event.key.code == sf::Keyboard::Numpad1)
+		num = 1;
+	else if (event.key.code == sf::Keyboard::Num2 || event.key.code == sf::Keyboard::Numpad2)
+		num = 2;
+	else if (event.key.code == sf::Keyboard::Num3 || event.key.code == sf::Keyboard::Numpad3)
+		num = 3;
+	else if (event.key.code == sf::Keyboard::Num4 || event.key.code == sf::Keyboard::Numpad4)
+		num = 4;
+	else if (event.key.code == sf::Keyboard::Num5 || event.key.code == sf::Keyboard::Numpad5)
+		num = 5;
+	else if (event.key.code == sf::Keyboard::Num6 || event.key.code == sf::Keyboard::Numpad6)
+		num = 6;
+	else if (event.key.code == sf::Keyboard::Num7 || event.key.code == sf::Keyboard::Numpad7)
+		num = 7;
+	else if (event.key.code == sf::Keyboard::Num8 || event.key.code == sf::Keyboard::Numpad8)
+		num = 8;
+	else if (event.key.code == sf::Keyboard::Num9 || event.key.code == sf::Keyboard::Numpad9)
+		num = 9;
+	
+	if (num > -1 && (sudoku_logic::is_input_correct(this->game_puzzle, i / 9, i % 9, num) || num == 0))
 	{
 		this->game_puzzle[i / 9][i % 9] = num;
 		return true;
 	}
 	return false;
+}
+
+bool game_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
+{
+	if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
+	{
+		return true;
+	}
+	else if (event.type == sf::Event::MouseButtonPressed)
+	{
+		if (event.mouseButton.button == sf::Mouse::Left)
+		{
+			check_indicator(app);
+		}
+		else
+		{
+			solve_sudoku();
+		}
+	}
+	else if (event.type = sf::Event::KeyPressed)
+	{
+		insert_number(event);
+	}
+	return false;
+}
+
+void game_screen::solve_sudoku()
+{
+	sudoku_logic::solve(game_puzzle);
+	this->is_changed = true;
+}
+
+void game_screen::check_indicator(sf::RenderWindow& app)
+{
+	this->is_indicator_on = false;
+	this->is_changed = true;
+	for (int i = 0; i < this->box.size(); i++)
+	{
+		if (this->box[i].getGlobalBounds().contains(get_mouse_coord(app)))
+		{
+			if (!this->is_init_exist[i / 9][i % 9])
+			{
+				this->indicator.setPosition(sf::Vector2f(this->box[i].getPosition().x - 3.f, box[i].getPosition().y - 3.f));
+				this->is_indicator_on = true;
+				this->indicator_position = i;
+			}
+			return;
+		}
+	}
+}
+
+void game_screen::insert_number(sf::Event& event)
+{
+	if (this->is_indicator_on)
+	{
+		if (key_code_handler(event, this->indicator_position))
+		{
+			this->is_changed = true;
+			this->is_indicator_on = false;
+		}
+	}
+}
+
+void game_screen::init_indicator()
+{
+	this->indicator.setSize(sf::Vector2f(BOX_SIZE + 6, BOX_SIZE + 6));
+	this->indicator.setFillColor(sf::Color::Green);
 }
 
 void game_screen::load_texture()
@@ -240,7 +247,7 @@ void game_screen::load_puzzle()
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			this->game_puzzle[i][j] = puzzle_0[i][j];
+			this->game_puzzle[i][j] = puzzle_2[i][j];
 			if (this->game_puzzle[i][j] != 0)
 				this->is_init_exist[i][j] = true;
 			else

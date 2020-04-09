@@ -17,7 +17,10 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 			}
 			else if (event.type == sf::Event::MouseButtonPressed)
 			{
-				return screen_name::GAME;
+				if (event.mouseButton.button == sf::Mouse::Left)
+					return screen_name::GAME;
+				else
+					return screen_name::CUSTOM;
 			}
 		}
 		app.clear(sf::Color::Black);

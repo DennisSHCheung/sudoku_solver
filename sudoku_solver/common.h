@@ -20,4 +20,4 @@ constexpr auto GRID_ORIGIN_X = 80;
 constexpr auto GRID_ORIGIN_Y = 80;
 
 // States
-enum screen_name { MENU, GAME, END };
+enum screen_name { MENU, GAME, CUSTOM, END };
