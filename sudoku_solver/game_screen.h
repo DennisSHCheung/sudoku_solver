@@ -32,14 +32,15 @@ public:
 	game_screen();
 
 	virtual screen_name run(sf::RenderWindow& app);
+	void display(sf::RenderWindow& app);
 
+	// Initialize game
+	void init(bool is_custom);
 	void init_indicator();
 	void load_texture();
 	void load_puzzle();
-
 	void set_grid_origin(int index, float& position);
 	void draw_grid();
-
 	void draw_inner_grid(sf::Vector2f origin);
 	void draw_numbers();
 

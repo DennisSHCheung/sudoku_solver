@@ -5,22 +5,34 @@ game_screen::game_screen()
 {
 }
 
+void game_screen::display(sf::RenderWindow& app)
+{
+	app.clear(sf::Color::Black);
+
+	for (auto &i : this->list_of_buttons)
+	{
+		app.draw(i.get_outer_button());
+		app.draw(i.get_inner_button());
+	}
+
+	app.draw(this->grid);
+
+	if (this->is_indicator_on)
+		app.draw(this->indicator);
+
+	for (auto &i : this->box)
+		app.draw(i);
+
+	draw_numbers();
+	for (auto &i : this->number_sprite)
+		app.draw(i);
+
+	app.display();
+}
+
 screen_name game_screen::run(sf::RenderWindow &app)
 {
-	// Initialize indicator
-	init_indicator();
-
-	// Load number texture
-	load_texture();
-
-	// Load game puzzle
-	load_puzzle();
-
-	// Initialise game grid
-	draw_grid();
-
-	// Initialise buttons
-	init_buttons();
+	init(false);
 
 	app.clear(sf::Color::Black);
 	while (app.isOpen())
@@ -40,27 +52,7 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		// Only re-print when something has happened to the puzzle
 		if (this->is_changed)
 		{
-			app.clear(sf::Color::Black);
-
-			for (auto &i : this->list_of_buttons)
-			{
-				app.draw(i.get_outer_button());
-				app.draw(i.get_inner_button());
-			}
-
-			app.draw(this->grid);
-
-			if (this->is_indicator_on)
-				app.draw(this->indicator);
-
-			for (auto &i : this->box)
-				app.draw(i);
-
-			draw_numbers();
-			for (auto &i : this->number_sprite)
-				app.draw(i);
-
-			app.display();
+			display(app);
 		}
 	}
 
@@ -82,10 +74,8 @@ void game_screen::draw_grid()
 
 	sf::Vector2f grid_size(full_grid, full_grid);
 	sf::Vector2f grid_origin(GRID_ORIGIN_X, GRID_ORIGIN_Y);
-
-	sf::RectangleShape outer_grid(grid_size);
-	outer_grid.setPosition(grid_origin);
-	this->grid = outer_grid;
+	this->grid.setSize(grid_size);
+	this->grid.setPosition(grid_origin);
 
 	sf::Vector2f current_origin = grid_origin;
 	for (int i = 0; i < 9; i++)
@@ -273,6 +263,15 @@ screen_name game_screen::button_handler(sf::RenderWindow& app)
 	default:
 		return screen_name::GAME;
 	}
+}
+
+void game_screen::init(bool is_custom)
+{
+	init_indicator();
+	load_texture();
+	draw_grid();
+	init_buttons();
+	if (!is_custom)	load_puzzle();
 }
 
 void game_screen::init_indicator()

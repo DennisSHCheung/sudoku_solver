@@ -7,16 +7,7 @@ custom_game_screen::custom_game_screen()
 
 screen_name custom_game_screen::run(sf::RenderWindow& app)
 {
-	// Initialize indicator
-	init_indicator();
-
-	// Load number texture
-	load_texture();
-
-	// Initialise game grid
-	draw_grid();
-
-	init_buttons();
+	init(true);
 
 	app.clear(sf::Color::Black);
 	while (app.isOpen())
