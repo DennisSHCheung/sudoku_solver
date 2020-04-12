@@ -28,6 +28,9 @@
     <Filter Include="Header Files\Art">
       <UniqueIdentifier>{a86d151a-fa56-4e24-b28e-648ab3fff215}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Common">
+      <UniqueIdentifier>{89441105-9d0e-4d05-8adb-8b99a277323f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sudoku.cpp">
@@ -47,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="button.cpp">
       <Filter>Source Files\Art</Filter>
+    </ClCompile>
+    <ClCompile Include="ascii_character.cpp">
+      <Filter>Source Files\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +79,9 @@
     </ClInclude>
     <ClInclude Include="button.h">
       <Filter>Header Files\Art</Filter>
+    </ClInclude>
+    <ClInclude Include="ascii_character.h">
+      <Filter>Header Files\Common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

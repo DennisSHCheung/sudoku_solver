@@ -9,6 +9,10 @@ void game_screen::display(sf::RenderWindow& app)
 {
 	app.clear(sf::Color::Black);
 
+	draw_UI();
+	for (auto& i : this->text)
+		app.draw(i);
+
 	for (auto &i : this->list_of_buttons)
 	{
 		app.draw(i.get_outer_button());
@@ -20,11 +24,11 @@ void game_screen::display(sf::RenderWindow& app)
 	if (this->is_indicator_on)
 		app.draw(this->indicator);
 
-	for (auto &i : this->box)
+	for (auto& i : this->box)
 		app.draw(i);
 
 	draw_numbers();
-	for (auto &i : this->number_sprite)
+	for (auto& i : this->number_sprite)
 		app.draw(i);
 
 	app.display();
@@ -50,10 +54,8 @@ screen_name game_screen::run(sf::RenderWindow &app)
 
 		// Avoid re-printing the puzzle every frame
 		// Only re-print when something has happened to the puzzle
-		if (this->is_changed)
-		{
+		if (this->is_changed) 
 			display(app);
-		}
 	}
 
 	// Should never be reached
@@ -85,13 +87,9 @@ void game_screen::draw_grid()
 		for (int j = 0; j < 9; j++)
 		{	
 			if (j == 0)
-			{
 				current_origin.x = grid_origin.x + OUTER_GRID_SIZE;
-			}
 			else
-			{
 				set_grid_origin(j, current_origin.x);
-			}
 			
 			draw_inner_grid(current_origin);
 		}
@@ -122,17 +120,30 @@ void game_screen::draw_numbers()
 				sprite.setTexture(input_number_texture);
 
 			sf::Vector2f origin = box.at(i * 9 + j).getPosition(); // Get the position of the corresponding box
-			int x = origin.x;
-			int y = origin.y;
-			if (this->game_puzzle[i][j] != 0)
-				sprite.setTextureRect(sf::IntRect(this->game_puzzle[i][j] * 7 - 7, 0, 7, 8));
-			else
-				sprite.setTextureRect(sf::IntRect(0, 15, 7, 8));	// Set to empty when number is 0
+			ascii_character::set_game_number_texture(sprite, this->game_puzzle[i][j]); // set number texture
 			sprite.setScale(sf::Vector2f(5.f, 5.f));
-			sprite.setPosition(sf::Vector2f(x + 16.f, y + 16.f));
+			sprite.setPosition(sf::Vector2f(origin.x + 16.f, origin.y + 16.f));
 			this->number_sprite.push_back(sprite);
 		}
 	}
+}
+
+void game_screen::draw_UI()
+{
+	this->text.clear();
+	std::string time = "abc ABC";
+	sf::Sprite sprite;
+	sprite.setTexture(this->alphabet_texture);
+	sf::Vector2f position(800.f, 100.f);
+	for (auto& i : time)
+	{
+		ascii_character::set_character_texture(sprite, i);
+		sprite.setPosition(position);
+		sprite.setScale(sf::Vector2f(5.f, 5.f));
+		position.x += 30.f;
+		this->text.push_back(sprite);
+	}
+		
 }
 
 bool game_screen::key_code_handler(sf::Event& event, int i)
@@ -287,6 +298,7 @@ void game_screen::load_texture()
 {
 	this->input_number_texture.loadFromFile(get_exe_location() + "\\number.png");
 	this->fixed_number_texture.loadFromFile(get_exe_location() + "\\number_yellow.png");
+	this->alphabet_texture.loadFromFile(get_exe_location() + "\\alphabet.png");
 }
 
 void game_screen::load_puzzle()

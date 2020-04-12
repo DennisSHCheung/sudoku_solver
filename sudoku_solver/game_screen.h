@@ -2,6 +2,7 @@
 #include "screen.h"
 #include "puzzles.h"
 #include "sudoku_logic.h"
+#include "ascii_character.h"
 
 class game_screen :
 	public screen
@@ -14,6 +15,7 @@ protected:
 	std::vector<sf::RectangleShape> box;
 	std::vector<sf::Sprite> number_sprite;
 	sf::RectangleShape indicator;
+	std::vector<sf::Sprite> text;
 
 	// grid indicator
 	bool is_indicator_on;
@@ -23,6 +25,7 @@ protected:
 	// textures used for numbers
 	sf::Texture input_number_texture;
 	sf::Texture fixed_number_texture;
+	sf::Texture alphabet_texture;
 
 	// 9x9 grid
 	int game_puzzle[9][9];
@@ -43,6 +46,7 @@ public:
 	void draw_grid();
 	void draw_inner_grid(sf::Vector2f origin);
 	void draw_numbers();
+	void draw_UI();
 
 	bool key_code_handler(sf::Event& event, int i);
 	screen_name event_handler(sf::Event&event, sf::RenderWindow& app);
