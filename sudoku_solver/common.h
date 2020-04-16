@@ -21,3 +21,11 @@ constexpr auto GRID_ORIGIN_Y = 80;
 
 // States
 enum screen_name { MENU, GAME, CUSTOM, END };
+
+// CHARACTER GAP
+constexpr auto LARGE_GAP = 30;
+constexpr auto SMALL_GAP = 15;
+
+extern sf::Texture HEADER_TEXTURE;
+extern sf::Texture NUMBER_TEXTURE;
+extern sf::Texture YELLOW_NUMBER_TEXTURE;

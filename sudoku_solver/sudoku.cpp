@@ -4,10 +4,30 @@
 #include "game_screen.h"
 #include "custom_game_screen.h"
 
+sf::Texture NUMBER_TEXTURE;
+sf::Texture YELLOW_NUMBER_TEXTURE;
+sf::Texture HEADER_TEXTURE;
+
+std::string get_exe_location()
+{
+	char result[MAX_PATH];
+	std::string path = std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+	path = path.substr(0, path.find_last_of("\\"));
+	path += "\\assets\\";
+	return path;
+}
+
+void init_texture()
+{
+	std::string path = get_exe_location();
+	NUMBER_TEXTURE.loadFromFile(path + "\\number.png");
+	YELLOW_NUMBER_TEXTURE.loadFromFile(path + "\\number_yellow.png");
+	HEADER_TEXTURE.loadFromFile(path + "\\headers.png");
+}
+
 int main(int argc, char* argv[])
 {
-	/*GameController controller;
-	controller.Run();*/
+	init_texture();
 
 	std::vector<screen*> screens;
 	screen_name current_screen = screen_name::MENU;

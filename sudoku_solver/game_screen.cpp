@@ -115,9 +115,9 @@ void game_screen::draw_numbers()
 			// Set numbers to yellow if they are part of the level
 			sf::Sprite sprite;
 			if (is_init_exist[i][j])
-				sprite.setTexture(fixed_number_texture);
+				sprite.setTexture(YELLOW_NUMBER_TEXTURE);
 			else
-				sprite.setTexture(input_number_texture);
+				sprite.setTexture(NUMBER_TEXTURE);
 
 			sf::Vector2f origin = box.at(i * 9 + j).getPosition(); // Get the position of the corresponding box
 			ascii_character::set_game_number_texture(sprite, this->game_puzzle[i][j]); // set number texture
@@ -131,19 +131,12 @@ void game_screen::draw_numbers()
 void game_screen::draw_UI()
 {
 	this->text.clear();
-	std::string time = "abc ABC";
 	sf::Sprite sprite;
-	sprite.setTexture(this->alphabet_texture);
 	sf::Vector2f position(800.f, 100.f);
-	for (auto& i : time)
-	{
-		ascii_character::set_character_texture(sprite, i);
-		sprite.setPosition(position);
-		sprite.setScale(sf::Vector2f(5.f, 5.f));
-		position.x += 30.f;
-		this->text.push_back(sprite);
-	}
-		
+	sprite.setPosition(position);
+	ascii_character::set_header_texture(sprite, "Return");
+	sprite.setScale(sf::Vector2f(5.f, 5.f));
+	this->text.push_back(sprite);
 }
 
 bool game_screen::key_code_handler(sf::Event& event, int i)
@@ -279,7 +272,6 @@ screen_name game_screen::button_handler(sf::RenderWindow& app)
 void game_screen::init(bool is_custom)
 {
 	init_indicator();
-	load_texture();
 	draw_grid();
 	init_buttons();
 	if (!is_custom)	load_puzzle();
@@ -292,13 +284,6 @@ void game_screen::init_indicator()
 	this->is_indicator_on = false;
 	this->is_changed = true;
 	this->indicator_position = 0;
-}
-
-void game_screen::load_texture()
-{
-	this->input_number_texture.loadFromFile(get_exe_location() + "\\number.png");
-	this->fixed_number_texture.loadFromFile(get_exe_location() + "\\number_yellow.png");
-	this->alphabet_texture.loadFromFile(get_exe_location() + "\\alphabet.png");
 }
 
 void game_screen::load_puzzle()

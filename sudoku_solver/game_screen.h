@@ -22,11 +22,6 @@ protected:
 	bool is_changed;
 	int indicator_position;
 
-	// textures used for numbers
-	sf::Texture input_number_texture;
-	sf::Texture fixed_number_texture;
-	sf::Texture alphabet_texture;
-
 	// 9x9 grid
 	int game_puzzle[9][9];
 	bool is_init_exist[9][9];
@@ -40,7 +35,6 @@ public:
 	// Initialize game
 	void init(bool is_custom);
 	void init_indicator();
-	void load_texture();
 	void load_puzzle();
 	void set_grid_origin(int index, float& position);
 	void draw_grid();
