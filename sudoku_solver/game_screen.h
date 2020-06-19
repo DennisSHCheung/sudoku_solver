@@ -40,7 +40,7 @@ public:
 	void draw_grid();
 	void draw_inner_grid(sf::Vector2f origin);
 	void draw_numbers();
-	void draw_UI();
+	virtual void draw_UI();
 
 	bool key_code_handler(sf::Event& event, int i);
 	screen_name event_handler(sf::Event&event, sf::RenderWindow& app);
@@ -49,7 +49,7 @@ public:
 	void solve_sudoku();
 
 	//screen_name button_handler(button_name button);
-	void init_buttons();
+	virtual void init_buttons();
 	screen_name button_handler(sf::RenderWindow& app);
 	int find_button(sf::RenderWindow& app);
 

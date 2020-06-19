@@ -30,7 +30,7 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 		while (app.pollEvent(event))
 		{
 			screen_name next_screen = event_handler(event, app);
-			if ((next_screen == screen_name::END) || (next_screen == screen_name::GAME))
+			if (next_screen != screen_name::MENU)
 				return next_screen;
 		}
 		
@@ -102,10 +102,10 @@ screen_name menu_screen::button_handler(sf::RenderWindow& app)
 
 	switch (static_cast<button_name>(button_index))
 	{
-	case button_name::START:
-		return screen_name::GAME;	// todo: custom
 	case button_name::CUSTOM:
-		return screen_name::GAME;
+		return screen_name::CUSTOM;
+	case button_name::START:
+		return screen_name::GAME;	
 	default:
 		return screen_name::GAME;
 	}

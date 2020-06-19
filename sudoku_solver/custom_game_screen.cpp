@@ -5,6 +5,36 @@ custom_game_screen::custom_game_screen()
 {
 }
 
+//void custom_game_screen::display(sf::RenderWindow& app)
+//{
+//	app.clear(sf::Color::Black);
+//
+//	draw_UI();
+//
+//	for (auto &i : this->list_of_buttons)
+//	{
+//		app.draw(i.get_outer_button());
+//		app.draw(i.get_inner_button());
+//	}
+//
+//	for (auto& i : this->text)
+//		app.draw(i);
+//
+//	app.draw(this->grid);
+//
+//	if (this->is_indicator_on)
+//		app.draw(this->indicator);
+//
+//	for (auto &i : this->box)
+//		app.draw(i);
+//
+//	draw_numbers();
+//	for (auto &i : this->number_sprite)
+//		app.draw(i);
+//
+//	app.display();
+//}
+
 screen_name custom_game_screen::run(sf::RenderWindow& app)
 {
 	init(true);
@@ -20,7 +50,7 @@ screen_name custom_game_screen::run(sf::RenderWindow& app)
 		while (app.pollEvent(event))
 		{
 			screen_name next_screen = event_handler(event, app);
-			if ((next_screen == screen_name::END) || (next_screen == screen_name::MENU))
+			if (next_screen != screen_name::CUSTOM)
 				return next_screen;
 		}
 
@@ -28,32 +58,26 @@ screen_name custom_game_screen::run(sf::RenderWindow& app)
 		// Only re-print when something has happened to the puzzle
 		if (this->is_changed)
 		{
-			app.clear(sf::Color::Black);
-
-			for (auto &i : this->list_of_buttons)
-			{
-				app.draw(i.get_outer_button());
-				app.draw(i.get_inner_button());
-			}
-			
-
-			app.draw(this->grid);
-
-			if (this->is_indicator_on)
-				app.draw(this->indicator);
-
-			for (auto &i : this->box)
-				app.draw(i);
-
-			draw_numbers();
-			for (auto &i : this->number_sprite)
-				app.draw(i);
-
-			app.display();
+			display(app);
 		}
 	}
 
 	return screen_name::END;
+}
+
+void custom_game_screen::draw_UI()
+{
+	this->text.clear();
+	sf::Sprite sprite;
+	sprite.setPosition(sf::Vector2f(862.f, 380.f));
+	ascii_character::set_header_texture(sprite, "Solve");
+	sprite.setScale(sf::Vector2f(6.f, 6.f));
+	this->text.push_back(sprite);
+
+	sprite.setPosition(sf::Vector2f(840.f, 530.f));
+	ascii_character::set_header_texture(sprite, "Return");
+	sprite.setScale(sf::Vector2f(6.f, 6.f));
+	this->text.push_back(sprite);
 }
 
 screen_name custom_game_screen::event_handler(sf::Event&event, sf::RenderWindow& app)
@@ -69,47 +93,43 @@ screen_name custom_game_screen::event_handler(sf::Event&event, sf::RenderWindow&
 			check_indicator(app);
 			return button_handler(app);
 		}
-		else
-		{
-			solve_sudoku();
-		}
 	}
 	else if (event.type = sf::Event::KeyPressed)
 	{
 		insert_number(event);
 	}
-	return screen_name::GAME;
+	return screen_name::CUSTOM;
 }
 
 void custom_game_screen::init_buttons()
 {
-	button confirm_button(5.f, sf::Vector2f(180.f, 80.f),
-		sf::Vector2f(800.f, 350.f), sf::Color::Green, sf::Color::White);
+	this->list_of_buttons.clear();
+	button solve_button(5.f, sf::Vector2f(260.f, 100.f),
+		sf::Vector2f(800.f, 350.f), sf::Color::Green, sf::Color::Black);
 
-	button return_button(5.f, sf::Vector2f(180.f, 80.f),
-		sf::Vector2f(800.f, 500.f), sf::Color::Green, sf::Color::White);
+	button return_button(5.f, sf::Vector2f(260.f, 100.f),
+		sf::Vector2f(800.f, 500.f), sf::Color::Green, sf::Color::Black);
 
-	this->list_of_buttons.push_back(confirm_button);
+	this->list_of_buttons.push_back(solve_button);
 	this->list_of_buttons.push_back(return_button);
 }
 
 screen_name custom_game_screen::button_handler(sf::RenderWindow& app)
 {
-	screen_name return_screen = screen_name::GAME;
-
 	// Find the selected button
 	int button_index = find_button(app);
 	if (button_index == -1)
-		return return_screen;
+		return screen_name::CUSTOM;
 
 	switch (static_cast<button_name>(button_index))
 	{
-	case button_name::CONFIRM:
-		return screen_name::GAME;
+	case button_name::SOLVE:
+		solve_sudoku();
+		return screen_name::CUSTOM;
 	case button_name::RETURN:
 		return screen_name::MENU;
 	default:
-		return screen_name::GAME;
+		return screen_name::CUSTOM;
 	}
 }
 

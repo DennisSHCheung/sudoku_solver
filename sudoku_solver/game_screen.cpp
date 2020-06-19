@@ -49,7 +49,7 @@ screen_name game_screen::run(sf::RenderWindow &app)
 		while (app.pollEvent(event))
 		{
 			screen_name next_screen = event_handler(event, app);
-			if ((next_screen == screen_name::END) || (next_screen == screen_name::MENU))
+			if (next_screen != screen_name::GAME)
 				return next_screen;
 		}		
 
@@ -290,7 +290,10 @@ void game_screen::init(bool is_custom)
 	init_indicator();
 	draw_grid();
 	init_buttons();
-	if (!is_custom)	load_puzzle();
+	if (!is_custom)
+		load_puzzle();
+	else
+		memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
 }
 
 void game_screen::init_indicator()
