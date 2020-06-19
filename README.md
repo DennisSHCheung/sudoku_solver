@@ -14,4 +14,7 @@
 - When installing SFML, choose static linking over dynamic
 - C++11 or above compiler (visual studio 2017 was used to execute the code)
 
+### Important
+When adding new puzzles to Puzzles.txt, make sure to leave two empty lines at the end so the last puzzle is registered.
+
 
