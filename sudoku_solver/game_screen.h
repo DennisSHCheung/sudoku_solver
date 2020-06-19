@@ -8,7 +8,7 @@ class game_screen :
 	public screen
 {
 private:
-	enum button_name { SOLVE, RETURN, EXIT };
+	enum button_name { SOLVE, RETURN, NEW };
 
 protected:
 	sf::RectangleShape grid;

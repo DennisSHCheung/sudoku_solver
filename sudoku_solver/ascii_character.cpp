@@ -18,11 +18,17 @@ void ascii_character::set_header_texture(sf::Sprite& sprite, std::string header)
 	if (header == "Time")
 		sprite.setTextureRect(sf::IntRect(0, 0, 17, 7));
 	else if (header == "Custom")
-		sprite.setTextureRect(sf::IntRect(0, 0, 17, 7));
+		sprite.setTextureRect(sf::IntRect(0, 8, 32, 7));
 	else if (header == "Start")
 		sprite.setTextureRect(sf::IntRect(0, 16, 25, 7));
 	else if (header == "Return")
 		sprite.setTextureRect(sf::IntRect(0, 24, 30, 7));
+	else if (header == "Sudoku")
+		sprite.setTextureRect(sf::IntRect(0, 32, 30, 7));
+	else if (header == "Solve")
+		sprite.setTextureRect(sf::IntRect(0, 40, 25, 7));
+	else if (header == "New")
+		sprite.setTextureRect(sf::IntRect(0, 48, 18, 7));
 }
 
 ascii_character::~ascii_character()

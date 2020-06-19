@@ -10,14 +10,15 @@ void game_screen::display(sf::RenderWindow& app)
 	app.clear(sf::Color::Black);
 
 	draw_UI();
-	for (auto& i : this->text)
-		app.draw(i);
 
 	for (auto &i : this->list_of_buttons)
 	{
 		app.draw(i.get_outer_button());
 		app.draw(i.get_inner_button());
 	}
+
+	for (auto& i : this->text)
+		app.draw(i);
 
 	app.draw(this->grid);
 
@@ -132,11 +133,21 @@ void game_screen::draw_UI()
 {
 	this->text.clear();
 	sf::Sprite sprite;
-	sf::Vector2f position(800.f, 100.f);
-	sprite.setPosition(position);
-	ascii_character::set_header_texture(sprite, "Return");
-	sprite.setScale(sf::Vector2f(5.f, 5.f));
+	sprite.setPosition(sf::Vector2f(862.f, 380.f));
+	ascii_character::set_header_texture(sprite, "Solve");
+	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
+
+	sprite.setPosition(sf::Vector2f(840.f, 530.f));
+	ascii_character::set_header_texture(sprite, "Return");
+	sprite.setScale(sf::Vector2f(6.f, 6.f));
+	this->text.push_back(sprite);
+
+	sprite.setPosition(sf::Vector2f(880.f, 230.f));
+	ascii_character::set_header_texture(sprite, "New");
+	sprite.setScale(sf::Vector2f(6.f, 6.f));
+	this->text.push_back(sprite);
+
 }
 
 bool game_screen::key_code_handler(sf::Event& event, int i)
@@ -232,14 +243,19 @@ void game_screen::insert_number(sf::Event& event)
 
 void game_screen::init_buttons()
 {
-	button solve_button(5.f, sf::Vector2f(180.f, 80.f),
-		sf::Vector2f(800.f, 350.f), sf::Color::Green, sf::Color::White);
+	this->list_of_buttons.clear();
+	button solve_button(5.f, sf::Vector2f(260.f, 100.f),
+		sf::Vector2f(800.f, 350.f), sf::Color::Green, sf::Color::Black);
 
-	button return_button(5.f, sf::Vector2f(180.f, 80.f),
-		sf::Vector2f(800.f, 500.f), sf::Color::Green, sf::Color::White);
+	button return_button(5.f, sf::Vector2f(260.f, 100.f),
+		sf::Vector2f(800.f, 500.f), sf::Color::Green, sf::Color::Black);
+
+	button new_button(5.f, sf::Vector2f(260.f, 100.f),
+		sf::Vector2f(800.f, 200.f), sf::Color::Green, sf::Color::Black);
 
 	this->list_of_buttons.push_back(solve_button);
 	this->list_of_buttons.push_back(return_button);
+	this->list_of_buttons.push_back(new_button);
 }
 
 int game_screen::find_button(sf::RenderWindow& app)
