@@ -1,8 +1,9 @@
 #pragma once
 #include "screen.h"
-#include "puzzles.h"
+#include <fstream>
 #include "sudoku_logic.h"
 #include "ascii_character.h"
+#include <random>
 
 class game_screen :
 	public screen
@@ -25,6 +26,9 @@ protected:
 	// 9x9 grid
 	int game_puzzle[9][9];
 	bool is_init_exist[9][9];
+	int puzzles_count;
+	int current_puzzle;
+	std::vector<std::vector<std::vector<int>>> all_puzzles;
 
 public:
 	game_screen();
@@ -36,6 +40,7 @@ public:
 	void init(bool is_custom);
 	void init_indicator();
 	void load_puzzle();
+	void select_puzzle();
 	void set_grid_origin(int index, float& position);
 	void draw_grid();
 	void draw_inner_grid(sf::Vector2f origin);
@@ -48,7 +53,6 @@ public:
 	void check_indicator(sf::RenderWindow& app);
 	void solve_sudoku();
 
-	//screen_name button_handler(button_name button);
 	virtual void init_buttons();
 	screen_name button_handler(sf::RenderWindow& app);
 	int find_button(sf::RenderWindow& app);

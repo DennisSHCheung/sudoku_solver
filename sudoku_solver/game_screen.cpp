@@ -280,6 +280,10 @@ screen_name game_screen::button_handler(sf::RenderWindow& app)
 		return screen_name::GAME;
 	case button_name::RETURN:
 		return screen_name::MENU;
+	case button_name::NEW:
+		memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
+		select_puzzle();
+		return screen_name::GAME;
 	default:
 		return screen_name::GAME;
 	}
@@ -290,10 +294,12 @@ void game_screen::init(bool is_custom)
 	init_indicator();
 	draw_grid();
 	init_buttons();
+	memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
 	if (!is_custom)
+	{
 		load_puzzle();
-	else
-		memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
+		select_puzzle();
+	}
 }
 
 void game_screen::init_indicator()
@@ -305,19 +311,70 @@ void game_screen::init_indicator()
 	this->indicator_position = 0;
 }
 
-void game_screen::load_puzzle()
+void game_screen::select_puzzle()
 {
+	std::random_device device;
+	std::mt19937 rng(device());
+	std::uniform_int_distribution<std::mt19937::result_type> gen_rand_puzzle(0, this->puzzles_count - 1);	
+	int random = gen_rand_puzzle(rng);
+
+	while (this->current_puzzle == random)
+		random = gen_rand_puzzle(rng);
+
+	this->current_puzzle = random;
 	for (int i = 0; i < 9; i++)
-	{
 		for (int j = 0; j < 9; j++)
 		{
-			this->game_puzzle[i][j] = puzzle_2[i][j];
+			this->game_puzzle[i][j] = this->all_puzzles[random][i][j];
 			if (this->game_puzzle[i][j] != 0)
 				this->is_init_exist[i][j] = true;
-			else
-				this->is_init_exist[i][j] = false;
+		}			
+}
+
+void game_screen::load_puzzle()
+{
+	char result[MAX_PATH];
+	std::string path = std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
+	path = path.substr(0, path.find_last_of("\\"));
+	path += "\\assets\\Puzzles.txt";
+
+	this->puzzles_count = 0;
+	this->current_puzzle = -1;
+
+	// Create a temporary 3d vector with a size of 100
+	std::vector<std::vector<int>> temp_puzzle(9, std::vector<int>(9, 0));
+	std::vector<std::vector<std::vector<int>>> temp_vec(100, temp_puzzle);
+
+	std::ifstream file(path);
+	if (file.is_open())
+	{
+		std::string line;
+		int row = 0, col = 0, line_count = 0;
+		while (std::getline(file, line)) 
+		{
+			if (line_count == 9)	// New puzzle every 9 lines
+			{
+				line_count = 0;
+				row = 0;
+				(this->puzzles_count)++;
+				continue;
+			}
+
+			int num_count = 0;
+			while (num_count < 9)	// Store all 9 numbers on every line
+			{
+				int num = line[num_count] - '0';	// Convert char to int
+				temp_vec[this->puzzles_count][row][num_count] = num;
+				num_count++;
+			}
+			
+			row++;
+			line_count++;
 		}
+		file.close();
 	}
+	
+	this->all_puzzles = temp_vec;
 }
 
 game_screen::~game_screen()

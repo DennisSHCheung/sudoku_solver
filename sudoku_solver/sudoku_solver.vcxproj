@@ -150,7 +150,6 @@
     <ClInclude Include="custom_game_screen.h" />
     <ClInclude Include="game_screen.h" />
     <ClInclude Include="menu_screen.h" />
-    <ClInclude Include="puzzles.h" />
     <ClInclude Include="screen.h" />
     <ClInclude Include="sudoku_logic.h" />
   </ItemGroup>
