@@ -1,4 +1,5 @@
 #include "menu_screen.h"
+#include <iostream>
 
 menu_screen::menu_screen()
 {
@@ -24,9 +25,9 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 {
 	init();
 
-	while (auto event = app.pollEvent())
+	while (app.isOpen())
 	{
-		if (event.has_value())
+		while (auto event = app.pollEvent())
 		{
 			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::MENU)

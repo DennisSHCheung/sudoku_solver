@@ -37,7 +37,7 @@ extern sf::Texture HEADER_TEXTURE;
 extern sf::Texture NUMBER_TEXTURE;
 extern sf::Texture YELLOW_NUMBER_TEXTURE;
 
-static auto GetCurrentPath() -> std::string
+static auto get_current_path() -> std::string
 {
 #ifdef linux
     std::filesystem::path exePath = std::filesystem::canonical("/proc/self/exe");

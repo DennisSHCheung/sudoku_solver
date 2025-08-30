@@ -40,12 +40,13 @@ screen_name custom_game_screen::run(sf::RenderWindow& app)
 	init(true);
 
 	app.clear(sf::Color::Black);
-	while (auto event = app.pollEvent())
+
+	while (app.isOpen())
 	{
 		// Make sure screen size is playable
 		check_screen_size(app);
-
-		if (event.has_value())
+		
+		while (auto event = app.pollEvent())
 		{
 			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::CUSTOM)
@@ -70,7 +71,6 @@ void custom_game_screen::draw_UI()
 	sprite.setPosition(sf::Vector2f(862.f, 380.f));	
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
-
 
 	sprite = ascii_character::make_header_sprite("Return");
 	sprite.setPosition(sf::Vector2f(840.f, 530.f));

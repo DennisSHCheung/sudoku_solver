@@ -45,12 +45,13 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	init(false);
 
 	app.clear(sf::Color::Black);
-	while (auto event = app.pollEvent())
+
+	while (app.isOpen())
 	{
 		// Make sure screen size is playable
 		check_screen_size(app);
-
-		if (event.has_value())
+		
+		while (auto event = app.pollEvent())
 		{
 			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::GAME)
@@ -118,7 +119,7 @@ void game_screen::draw_numbers()
 		for (int j = 0; j < 9; j++)
 		{
 			// Set numbers to yellow if they are part of the level
-			auto texture = is_init_exist[i][j] ? sf::Texture(YELLOW_NUMBER_TEXTURE) : sf::Texture(NUMBER_TEXTURE);
+			const auto& texture = is_init_exist[i][j] ? YELLOW_NUMBER_TEXTURE : NUMBER_TEXTURE;
 			auto sprite = sf::Sprite(texture);
 
 			sf::Vector2f origin = box.at(i * 9 + j).getPosition(); // Get the position of the corresponding box
@@ -331,8 +332,8 @@ void game_screen::select_puzzle()
 
 void game_screen::load_puzzle()
 {
-	auto path = GetCurrentPath();
-	path += "\\assets\\Puzzles.txt";
+	auto path = get_current_path();
+	path += "/assets/Puzzles.txt";
 
 	this->puzzles_count = 0;
 	this->current_puzzle = -1;
