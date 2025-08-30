@@ -40,16 +40,14 @@ screen_name custom_game_screen::run(sf::RenderWindow& app)
 	init(true);
 
 	app.clear(sf::Color::Black);
-	while (app.isOpen())
+	while (auto event = app.pollEvent())
 	{
-
 		// Make sure screen size is playable
 		check_screen_size(app);
 
-		sf::Event event;
-		while (app.pollEvent(event))
+		if (event.has_value())
 		{
-			screen_name next_screen = event_handler(event, app);
+			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::CUSTOM)
 				return next_screen;
 		}
@@ -68,33 +66,33 @@ screen_name custom_game_screen::run(sf::RenderWindow& app)
 void custom_game_screen::draw_UI()
 {
 	this->text.clear();
-	sf::Sprite sprite;
-	sprite.setPosition(sf::Vector2f(862.f, 380.f));
-	ascii_character::set_header_texture(sprite, "Solve");
+	auto sprite = ascii_character::make_header_sprite("Solve");
+	sprite.setPosition(sf::Vector2f(862.f, 380.f));	
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
+
+	sprite = ascii_character::make_header_sprite("Return");
 	sprite.setPosition(sf::Vector2f(840.f, 530.f));
-	ascii_character::set_header_texture(sprite, "Return");
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 }
 
-screen_name custom_game_screen::event_handler(sf::Event&event, sf::RenderWindow& app)
+screen_name custom_game_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
 {
-	if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
+	if (event.is<sf::Event::Closed>()) // || event.key.code == sf::Keyboard::Escape
 	{
 		return screen_name::END;
 	}
-	else if (event.type == sf::Event::MouseButtonPressed)
+	else if (auto* const mouse = event.getIf<sf::Event::MouseButtonPressed>())
 	{
-		if (event.mouseButton.button == sf::Mouse::Left)
+		if (mouse->button == sf::Mouse::Button::Left)
 		{
 			check_indicator(app);
 			return button_handler(app);
 		}
 	}
-	else if (event.type = sf::Event::KeyPressed)
+	else if (auto* const key = event.getIf<sf::Event::KeyPressed>())
 	{
 		insert_number(event);
 	}
