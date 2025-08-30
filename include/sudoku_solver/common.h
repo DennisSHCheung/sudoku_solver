@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-#include <windows.h>
 
 // Minimum screen width for better gaming experience
 constexpr auto MIN_SCREEN_WIDTH = 500;
