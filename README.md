@@ -1,18 +1,13 @@
 # sudoku_solver
 
 ### Menu screen
-![alt text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/sudoku_solver/images/Menu.PNG?raw=true)
+![alt_text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/data/images/Menu.PNG)
 
 ### Custom screen
-![alt text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/sudoku_solver/images/Custom.PNG?raw=true)
+![alt_text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/data/images/Custom.PNG)
 
 ### Level screen
-![alt text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/sudoku_solver/images/Level.PNG?raw=true)
-
-### Requirements to build the program
-- C++ SFML (visit https://www.sfml-dev.org/ to find out how to install this tool)
-- When installing SFML, choose static linking over dynamic
-- C++11 or above compiler (visual studio 2017 was used to execute the code)
+![alt text](https://github.com/DennisSHCheung/sudoku_solver/blob/master/data/images/Level.PNG)
 
 ### Important
 When adding new puzzles to Puzzles.txt, make sure to leave two empty lines at the end so the last puzzle is registered.
