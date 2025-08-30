@@ -24,7 +24,7 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 {
 	init();
 
-	while (auto event = app.pollEvent())	
+	while (auto event = app.pollEvent())
 	{
 		if (event.has_value())
 		{

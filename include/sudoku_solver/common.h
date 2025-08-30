@@ -1,6 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+#include <string>
+
+#ifdef linux
+#include <filesystem>
+#else 
+#include <windows.h>
+#endif
+
 // Minimum screen width for better gaming experience
 constexpr auto MIN_SCREEN_WIDTH = 500;
 constexpr auto MIN_SCREEN_HEIGHT = 500;
@@ -28,3 +36,20 @@ constexpr auto SMALL_GAP = 15;
 extern sf::Texture HEADER_TEXTURE;
 extern sf::Texture NUMBER_TEXTURE;
 extern sf::Texture YELLOW_NUMBER_TEXTURE;
+
+static auto GetCurrentPath() -> std::string
+{
+#ifdef linux
+    std::filesystem::path exePath = std::filesystem::canonical("/proc/self/exe");
+#else
+    wchar_t buffer[MAX_PATH];
+    auto length = GetModuleFIleNameW(nullptr, buffer, MAX_PATH);
+    if ((length == 0) || (length == MAX_PATH)) 
+    {
+        return std::string();
+    }
+
+    std::filesystem::path exePath(buffer);
+#endif
+    return exePath.string();
+}

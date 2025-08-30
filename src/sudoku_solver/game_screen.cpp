@@ -1,5 +1,10 @@
 #include "game_screen.h"
+#include "common.h"
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Window/Keyboard.hpp>
 #include <iostream>
+#include <cstring>
 
 game_screen::game_screen()
 {
@@ -40,15 +45,14 @@ screen_name game_screen::run(sf::RenderWindow &app)
 	init(false);
 
 	app.clear(sf::Color::Black);
-	while (app.isOpen())
+	while (auto event = app.pollEvent())
 	{
 		// Make sure screen size is playable
 		check_screen_size(app);
 
-		sf::Event event;
-		while (app.pollEvent(event))
+		if (event.has_value())
 		{
-			screen_name next_screen = event_handler(event, app);
+			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::GAME)
 				return next_screen;
 		}		
@@ -114,11 +118,8 @@ void game_screen::draw_numbers()
 		for (int j = 0; j < 9; j++)
 		{
 			// Set numbers to yellow if they are part of the level
-			sf::Sprite sprite;
-			if (is_init_exist[i][j])
-				sprite.setTexture(YELLOW_NUMBER_TEXTURE);
-			else
-				sprite.setTexture(NUMBER_TEXTURE);
+			auto texture = is_init_exist[i][j] ? sf::Texture(YELLOW_NUMBER_TEXTURE) : sf::Texture(NUMBER_TEXTURE);
+			auto sprite = sf::Sprite(texture);
 
 			sf::Vector2f origin = box.at(i * 9 + j).getPosition(); // Get the position of the corresponding box
 			ascii_character::set_game_number_texture(sprite, this->game_puzzle[i][j]); // set number texture
@@ -132,19 +133,18 @@ void game_screen::draw_numbers()
 void game_screen::draw_UI()
 {
 	this->text.clear();
-	sf::Sprite sprite;
+	auto sprite = ascii_character::make_header_sprite("Solve");
 	sprite.setPosition(sf::Vector2f(862.f, 380.f));
-	ascii_character::set_header_texture(sprite, "Solve");
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
+	sprite = ascii_character::make_header_sprite("Return");
 	sprite.setPosition(sf::Vector2f(840.f, 530.f));
-	ascii_character::set_header_texture(sprite, "Return");
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
+	sprite = ascii_character::make_header_sprite("New");
 	sprite.setPosition(sf::Vector2f(880.f, 230.f));
-	ascii_character::set_header_texture(sprite, "New");
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
@@ -152,28 +152,26 @@ void game_screen::draw_UI()
 
 bool game_screen::key_code_handler(sf::Event& event, int i)
 {
-	int num = -1;
+	auto* const key = event.getIf<sf::Event::KeyPressed>();
+	if (key == nullptr) {
+		return false;
+	}
 
-	if (event.key.code == sf::Keyboard::Num0 || event.key.code == sf::Keyboard::Numpad0)
-		num = 0;
-	else if (event.key.code == sf::Keyboard::Num1 || event.key.code == sf::Keyboard::Numpad1)
-		num = 1;
-	else if (event.key.code == sf::Keyboard::Num2 || event.key.code == sf::Keyboard::Numpad2)
-		num = 2;
-	else if (event.key.code == sf::Keyboard::Num3 || event.key.code == sf::Keyboard::Numpad3)
-		num = 3;
-	else if (event.key.code == sf::Keyboard::Num4 || event.key.code == sf::Keyboard::Numpad4)
-		num = 4;
-	else if (event.key.code == sf::Keyboard::Num5 || event.key.code == sf::Keyboard::Numpad5)
-		num = 5;
-	else if (event.key.code == sf::Keyboard::Num6 || event.key.code == sf::Keyboard::Numpad6)
-		num = 6;
-	else if (event.key.code == sf::Keyboard::Num7 || event.key.code == sf::Keyboard::Numpad7)
-		num = 7;
-	else if (event.key.code == sf::Keyboard::Num8 || event.key.code == sf::Keyboard::Numpad8)
-		num = 8;
-	else if (event.key.code == sf::Keyboard::Num9 || event.key.code == sf::Keyboard::Numpad9)
-		num = 9;
+	int num = -1;
+	using Sc = sf::Keyboard::Scancode;
+    switch (key->scancode) {
+        case Sc::Num0: case Sc::Numpad0: num = 0; break;
+        case Sc::Num1: case Sc::Numpad1: num = 1; break;
+        case Sc::Num2: case Sc::Numpad2: num = 2; break;
+        case Sc::Num3: case Sc::Numpad3: num = 3; break;
+        case Sc::Num4: case Sc::Numpad4: num = 4; break;
+        case Sc::Num5: case Sc::Numpad5: num = 5; break;
+        case Sc::Num6: case Sc::Numpad6: num = 6; break;
+        case Sc::Num7: case Sc::Numpad7: num = 7; break;
+        case Sc::Num8: case Sc::Numpad8: num = 8; break;
+        case Sc::Num9: case Sc::Numpad9: num = 9; break;
+        default: break;
+    }
 	
 	if (num > -1 && (sudoku_logic::is_input_correct(this->game_puzzle, i / 9, i % 9, num) || num == 0))
 	{
@@ -185,19 +183,19 @@ bool game_screen::key_code_handler(sf::Event& event, int i)
 
 screen_name game_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
 {
-	if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
+	if (event.is<sf::Event::Closed>()) // || event.key.code == sf::Keyboard::Escape
 	{
 		return screen_name::END;
 	}
-	else if (event.type == sf::Event::MouseButtonPressed)
+	else if (auto* const mouse = event.getIf<sf::Event::MouseButtonPressed>())
 	{
-		if (event.mouseButton.button == sf::Mouse::Left)
+		if (mouse->button == sf::Mouse::Button::Left)
 		{
 			check_indicator(app);
 			return button_handler(app);
 		}
 	}
-	else if (event.type = sf::Event::KeyPressed)
+	else if (auto* const key = event.getIf<sf::Event::KeyPressed>())
 	{
 		insert_number(event);
 	}
@@ -281,7 +279,7 @@ screen_name game_screen::button_handler(sf::RenderWindow& app)
 	case button_name::RETURN:
 		return screen_name::MENU;
 	case button_name::NEW:
-		memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
+		std::memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
 		select_puzzle();
 		return screen_name::GAME;
 	default:
@@ -294,7 +292,7 @@ void game_screen::init(bool is_custom)
 	init_indicator();
 	draw_grid();
 	init_buttons();
-	memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
+	std::memset(this->game_puzzle, 0, sizeof(this->game_puzzle));
 	if (!is_custom)
 	{
 		load_puzzle();
@@ -333,9 +331,7 @@ void game_screen::select_puzzle()
 
 void game_screen::load_puzzle()
 {
-	char result[MAX_PATH];
-	std::string path = std::string(result, GetModuleFileName(NULL, result, MAX_PATH));
-	path = path.substr(0, path.find_last_of("\\"));
+	auto path = GetCurrentPath();
 	path += "\\assets\\Puzzles.txt";
 
 	this->puzzles_count = 0;
