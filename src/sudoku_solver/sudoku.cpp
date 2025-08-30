@@ -13,16 +13,16 @@ sf::Texture HEADER_TEXTURE;
 std::string get_exe_location()
 {
 	auto path = GetCurrentPath();
-	path += "\\assets\\";
+	path += "/assets";
 	return path;
 }
 
 void init_texture()
 {
 	std::string path = get_exe_location();
-	std::ignore = NUMBER_TEXTURE.loadFromFile(path + "\\number.png");
-	std::ignore = YELLOW_NUMBER_TEXTURE.loadFromFile(path + "\\number_yellow.png");
-	std::ignore = HEADER_TEXTURE.loadFromFile(path + "\\headers.png");
+	std::ignore = NUMBER_TEXTURE.loadFromFile(path + "/number.png");
+	std::ignore = YELLOW_NUMBER_TEXTURE.loadFromFile(path + "/number_yellow.png");
+	std::ignore = HEADER_TEXTURE.loadFromFile(path + "/headers.png");
 }
 
 int main(int argc, char* argv[])

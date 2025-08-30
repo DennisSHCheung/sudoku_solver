@@ -51,5 +51,5 @@ static auto GetCurrentPath() -> std::string
 
     std::filesystem::path exePath(buffer);
 #endif
-    return exePath.string();
+    return exePath.parent_path().string();
 }

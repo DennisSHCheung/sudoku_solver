@@ -8,4 +8,5 @@ target_include_directories(sudoku_solver PUBLIC ${PROJECT_SOURCE_DIR}/include/su
 target_link_libraries(sudoku_solver PUBLIC SFML::Graphics SFML::Window SFML::System)
 target_compile_features(sudoku_solver PUBLIC cxx_std_23)
 
-file(COPY ${PROJECT_SOURCE_DIR}/data DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/data/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/data/images DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
