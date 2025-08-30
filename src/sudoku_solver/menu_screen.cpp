@@ -24,12 +24,11 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 {
 	init();
 
-	while (app.isOpen())
+	while (auto event = app.pollEvent())	
 	{
-		sf::Event event;
-		while (app.pollEvent(event))
+		if (event.has_value())
 		{
-			screen_name next_screen = event_handler(event, app);
+			screen_name next_screen = event_handler(*event, app);
 			if (next_screen != screen_name::MENU)
 				return next_screen;
 		}
@@ -44,19 +43,18 @@ screen_name menu_screen::run(sf::RenderWindow& app)
 void menu_screen::draw_UI()
 {
 	this->text.clear();
-	sf::Sprite sprite;
+	auto sprite = ascii_character::make_header_sprite("Custom");
 	sprite.setPosition(sf::Vector2f(505.f, 480.f));
-	ascii_character::set_header_texture(sprite, "Custom");
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
-	sprite.setPosition(sf::Vector2f(525.f, 630.f));
-	ascii_character::set_header_texture(sprite, "Start");
+	sprite = ascii_character::make_header_sprite("Start");
+	sprite.setPosition(sf::Vector2f(525.f, 630.f));	
 	sprite.setScale(sf::Vector2f(6.f, 6.f));
 	this->text.push_back(sprite);
 
-	sprite.setPosition(sf::Vector2f(455.f, 230.f));
-	ascii_character::set_header_texture(sprite, "Sudoku");
+	sprite = ascii_character::make_header_sprite("Sudoku");
+	sprite.setPosition(sf::Vector2f(455.f, 230.f));	
 	sprite.setScale(sf::Vector2f(10.f, 10.f));
 	this->text.push_back(sprite);
 
@@ -71,13 +69,13 @@ void menu_screen::init()
 
 screen_name menu_screen::event_handler(sf::Event& event, sf::RenderWindow& app)
 {
-	if (event.type == sf::Event::Closed) // || event.key.code == sf::Keyboard::Escape
+	if (event.is<sf::Event::Closed>()) // || event.key.code == sf::Keyboard::Escape
 	{
 		return screen_name::END;
 	}
-	else if (event.type == sf::Event::MouseButtonPressed)
+	else if (auto* const mouse = event.getIf<sf::Event::MouseButtonPressed>())
 	{
-		if (event.mouseButton.button == sf::Mouse::Left)
+		if (mouse->button == sf::Mouse::Button::Left)
 		{
 			return button_handler(app);
 		}
